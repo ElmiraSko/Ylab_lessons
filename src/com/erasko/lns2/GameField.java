@@ -5,7 +5,7 @@ import java.util.Arrays;
 public class GameField {
 
     // координата х - строка, координата у - столбец
-    int[][] field = new int[3][3];
+    private int[][] field = new int[3][3];
 
     static final int GAME_STEP_NUMBERS = 9; // количество значимых ходов в игре
     static final int WINNING_X = 21; // выигрышная сумма для крестика (Х)

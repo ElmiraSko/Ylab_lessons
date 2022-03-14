@@ -21,6 +21,8 @@ public class GameController {
             System.out.println("Ошибка при работе с файлом");
         }
     }
+
+
     // метод записывает информацию в файл
     public void write(String info) {
         try {
@@ -81,6 +83,11 @@ public class GameController {
     // метод печатает поле в консоль
     public void printField() {
         view.printField(field.getField());
+    }
+
+    // метод печатает поле в консоль
+    public void printField(int[][] otherField) {
+        view.printField(otherField);
     }
 }
 

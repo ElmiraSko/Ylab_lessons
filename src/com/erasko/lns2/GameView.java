@@ -4,6 +4,7 @@ public class GameView {
 
     // вывод игрового поля в консоль
     public void printField(int[][] field) {
+        System.out.println();
         for (int[] rowLine : field) {
             for (int cell : rowLine) {
                 if (cell == 0) {

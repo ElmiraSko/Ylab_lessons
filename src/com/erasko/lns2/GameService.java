@@ -1,11 +1,20 @@
 package com.erasko.lns2;
 
+import com.erasko.lns2.loggers.DOMGameLogger;
+import com.erasko.lns2.loggers.GameLogger;
+import com.erasko.lns2.loggers.StaxStreamLogger;
+
 import java.util.*;
 
-public class GameTest {
+public class GameService {
+
+    // Можно воспользоватья одним из логеров: DOMGameLogger() или StaxStreamLogger()
+//    static GameLogger logger = new DOMGameLogger();
+    static GameLogger logger = new StaxStreamLogger();
 
     // Список игроков
     static ArrayList<Player> players = new ArrayList<>();
+
     // Компаратор для сортировки списка игроков
     static RatingComparator ratingComp = new RatingComparator();
 
@@ -14,6 +23,8 @@ public class GameTest {
 
     // Флаг - игра продолжается или нет
     static boolean wantToPlayMore = true;
+
+    static String draw = "Draw!";
 
     // Проверяем, новый ли игрок
     public static boolean isNewPlayer(Player player) {
@@ -66,6 +77,9 @@ public class GameTest {
                 players.add(player2);
             }
 
+            // Записываем игроков в лог
+            logger.wrightPlayers(player1.toString(), player2.toString());
+
             // Цикл новой партии.
             // Партия выполняется для 9 ничейных ходов или пока не получим выигрыш
             while (count <= GameField.GAME_STEP_NUMBERS && !GameField.gameOver) {
@@ -88,6 +102,9 @@ public class GameTest {
                     controller.gameMove(x, y, 2);
                     controller.write( "Ход " + player2 + " " + (x+1) + (y+1));
                 }
+                // записываем шаги игры в лог
+                logger.wrightStep(count, coordinates);
+
                 // Проверяем ячейки на выигрыш
                 controller.checkSum();
                 // Если есть выигрыш
@@ -101,6 +118,9 @@ public class GameTest {
                     controller.write("Выиграл " + winner);
                     System.out.println("Выиграл " + winner);
                     winner.addWins(); // увеличили количество побед игрока
+
+                    // Записываем результат игры - имя победителя
+                    logger.wrightWinnerOrDraw(winner.toString());
                 }
                 // Расспечатываем игровое поле
                 controller.printField();
@@ -108,14 +128,41 @@ public class GameTest {
             }
             // Если партия закончилась ничьей
             if (!GameField.gameOver) {
-                controller.write("Ничья");
-                System.out.println("Ничья");
+                controller.write(draw);
+                System.out.println(draw);
+                // Записываем результат игры - Ничья!
+                logger.wrightWinnerOrDraw(draw);
             }
 
             players.sort(ratingComp);  // отсортировали игроков
             controller.write(players);  // записали рейтинг в файл
-            System.out.println(players);
+            System.out.println(players); // вывели на консоль
 
+            // Пока реализована возможность прочитать
+            // последнюю сыгранную игру, Возможность выбрать предыдущий записанный файл еще не реализована
+            System.out.println("Игра была записана в файл, хотите проиграть эту игру?");
+            // цикл получения ответа на вопрос
+            while (true) {
+                String answer = sc.nextLine();
+                if(answer.toLowerCase().equals("да")) {
+                   logger.readXMLFile(); // читаем xml-файл и отображаем на консоль
+                   ArrayList<String> playerList = logger.getPlayerList();
+                    for (String player : playerList) {
+                        System.out.println(player);
+                    }
+                   ArrayList<int[][]> fieldArr = logger.getPlayerStepArray();
+                    for (int[][] stepField: fieldArr) {
+                        controller.printField(stepField);
+                    }
+                    System.out.println( logger.getWinnerOrDraw());
+                    break; // выходим из цикла опроса
+                } else if(answer.toLowerCase().equals("нет")){
+                    System.out.println("Хорошо.");
+                    break;
+                } else {
+                    System.out.println("Пожалуйста, ответьте точнее.");
+                }
+            }
             System.out.println("Хотите сыграть еще раз? Введите ответ да или нет");
             // цикл получения ответа на вопрос
             while (true) {
