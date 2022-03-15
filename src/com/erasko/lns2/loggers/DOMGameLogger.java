@@ -26,7 +26,7 @@ public class DOMGameLogger extends GameLogger {
     Document doc = null;
 
     @Override
-    public void wrightPlayers(String name1, String name2) {
+    public void writePlayers(String name1, String name2) {
 
         count++;
         helpField = new int[3][3];
@@ -61,7 +61,7 @@ public class DOMGameLogger extends GameLogger {
 
     // Метод записывает шаги игры
     @Override
-    public void wrightStep(int num, String coords) {
+    public void writeStep(int num, String coords) {
         // определяем playerId
         String playerId = num % 2 == 1 ? "1" : "2";
         Node node = doc.getElementsByTagName("Game").item(0);
@@ -76,7 +76,7 @@ public class DOMGameLogger extends GameLogger {
 
     // Метод записывает выигрышный результат или ничью
     @Override
-    public void wrightWinnerOrDraw(String result) {
+    public void writeWinnerOrDraw(String result) {
         Node node = doc.getElementsByTagName("Gameplay").item(0);
         Element gameResult = doc.createElement("GameResult");
         node.appendChild(gameResult);
@@ -121,7 +121,7 @@ public class DOMGameLogger extends GameLogger {
                     Element stepEl = (Element) stepNode;
                     int playerId = Integer.parseInt(stepEl.getAttribute("playerId"));
                     String coords = stepEl.getTextContent();
-                    wrightCoordsInHelpField(coords, playerId);
+                    writeCoordsInHelpField(coords, playerId);
                 }
             }
             // Прочитали результат

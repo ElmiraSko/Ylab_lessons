@@ -26,7 +26,7 @@ public class StaxStreamLogger extends GameLogger {
 
     // В allData сохраняем имена играков
     @Override
-    public void wrightPlayers(String name1, String name2) {
+    public void writePlayers(String name1, String name2) {
         count++;
         allData = new ArrayList<>();
         pl1Name = name1;
@@ -42,7 +42,7 @@ public class StaxStreamLogger extends GameLogger {
 
     // В allData сохранили ходы играков
     @Override
-    public void wrightStep(int num, String coords) {
+    public void writeStep(int num, String coords) {
         // определяем playerId
         String playerId = num % 2 == 1 ? "1" : "2";
         StringBuilder step = new StringBuilder()
@@ -56,7 +56,7 @@ public class StaxStreamLogger extends GameLogger {
 
     // В allData сохранили результат игры
     @Override
-    public void wrightWinnerOrDraw(String result) {
+    public void writeWinnerOrDraw(String result) {
         if (result.equals(pl1Name)) {
             allData.add(result + " 1 X");
         } else if (result.equals(pl2Name)) {
@@ -178,7 +178,7 @@ public class StaxStreamLogger extends GameLogger {
                             eventType = reader.next();
                             if (eventType == XMLEvent.CHARACTERS) {
                                 String coords = reader.getText();
-                                wrightCoordsInHelpField(coords, Integer.parseInt(playerId));
+                                writeCoordsInHelpField(coords, Integer.parseInt(playerId));
                             }
                             break;
 

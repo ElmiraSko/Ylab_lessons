@@ -33,16 +33,16 @@ public abstract class GameLogger {
         return winnerOrDraw.toString();
     }
 
-    public abstract void wrightPlayers(String name1, String name2);
+    public abstract void writePlayers(String name1, String name2);
 
-    public abstract void wrightStep(int num, String coords);
+    public abstract void writeStep(int num, String coords);
 
-    public abstract void wrightWinnerOrDraw(String winner);
+    public abstract void writeWinnerOrDraw(String winner);
 
     public abstract void readXMLFile();
 
     // Служебный метод, создает кадры состояния игрового поля
-    protected void wrightCoordsInHelpField(String coords, int playerId) {
+    protected void writeCoordsInHelpField(String coords, int playerId) {
         int x = Integer.parseInt(coords.substring(0,1)) - 1;
         int y = Integer.parseInt(coords.substring(1)) - 1;
         if (playerId == 1) {

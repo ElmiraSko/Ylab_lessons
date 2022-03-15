@@ -1,6 +1,5 @@
 package com.erasko.lns2;
 
-import com.erasko.lns2.loggers.DOMGameLogger;
 import com.erasko.lns2.loggers.GameLogger;
 import com.erasko.lns2.loggers.StaxStreamLogger;
 
@@ -78,7 +77,7 @@ public class GameService {
             }
 
             // Записываем игроков в лог
-            logger.wrightPlayers(player1.toString(), player2.toString());
+            logger.writePlayers(player1.toString(), player2.toString());
 
             // Цикл новой партии.
             // Партия выполняется для 9 ничейных ходов или пока не получим выигрыш
@@ -103,7 +102,7 @@ public class GameService {
                     controller.write( "Ход " + player2 + " " + (x+1) + (y+1));
                 }
                 // записываем шаги игры в лог
-                logger.wrightStep(count, coordinates);
+                logger.writeStep(count, coordinates);
 
                 // Проверяем ячейки на выигрыш
                 controller.checkSum();
@@ -120,7 +119,7 @@ public class GameService {
                     winner.addWins(); // увеличили количество побед игрока
 
                     // Записываем результат игры - имя победителя
-                    logger.wrightWinnerOrDraw(winner.toString());
+                    logger.writeWinnerOrDraw(winner.toString());
                 }
                 // Расспечатываем игровое поле
                 controller.printField();
@@ -131,7 +130,7 @@ public class GameService {
                 controller.write(draw);
                 System.out.println(draw);
                 // Записываем результат игры - Ничья!
-                logger.wrightWinnerOrDraw(draw);
+                logger.writeWinnerOrDraw(draw);
             }
 
             players.sort(ratingComp);  // отсортировали игроков
