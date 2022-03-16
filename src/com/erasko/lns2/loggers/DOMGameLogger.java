@@ -18,6 +18,7 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class DOMGameLogger extends GameLogger {
 
@@ -25,14 +26,26 @@ public class DOMGameLogger extends GameLogger {
     DocumentBuilder db  = null;
     Document doc = null;
 
+    // Метод записывает выигрышный результат или ничью
     @Override
-    public void writePlayers(String name1, String name2) {
+    public void writeWinnerOrDraw(String result) {
+        if (result.equals(pl1Name)) {
+            allData.add(result + " 1 X");
+        } else if (result.equals(pl2Name)) {
+            allData.add(result + " 2 O");
+        } else {
+            allData.add(result);
+        }
+        saveDataInFile();
+    }
 
-        count++;
-        helpField = new int[3][3];
-        playerList = new ArrayList<>(2);
-        playerStepArray = new ArrayList<>(9);
-        winnerOrDraw = new StringBuilder();
+    // Служебный метод, записывает в файл
+    private void saveDataInFile() {
+        date = new Date();
+        String dateSuffix = dateFormat.format(date);
+        // Собираем имя файла, добавили временное значение
+        String file = firstPartOfFile + dateSuffix + ".xml";
+        currentNewRecordedFile = file;
 
         try {
             dbf = DocumentBuilderFactory.newInstance();
@@ -42,61 +55,68 @@ public class DOMGameLogger extends GameLogger {
             e.printStackTrace();
         }
 
-        pl1Name = name1;
-        pl2Name = name2;
-
         Element root_el = doc.createElement("Gameplay");
         doc.appendChild(root_el);
 
-        Element player1 = createElementPlayer("1", name1, "X");
-        Element player2 = createElementPlayer("2", name2, "O");
-
+        Element player1 = createElementPlayer("1", allData.get(0), "X");
+        Element player2 = createElementPlayer("2", allData.get(1), "O");
         root_el.appendChild(player1);
         root_el.appendChild(player2);
-
         Element game = doc.createElement("Game");
-        root_el.appendChild(game);
-        saveDataInFile();
-    }
-
-    // Метод записывает шаги игры
-    @Override
-    public void writeStep(int num, String coords) {
-        // определяем playerId
-        String playerId = num % 2 == 1 ? "1" : "2";
-        Node node = doc.getElementsByTagName("Game").item(0);
-
-        Element step = doc.createElement("Step");
-        step.setAttribute("num", String.valueOf(num));
-        step.setAttribute("playerId", playerId);
-        step.setTextContent(coords);
-        node.appendChild(step);
-        saveDataInFile();
-    }
-
-    // Метод записывает выигрышный результат или ничью
-    @Override
-    public void writeWinnerOrDraw(String result) {
-        Node node = doc.getElementsByTagName("Gameplay").item(0);
         Element gameResult = doc.createElement("GameResult");
-        node.appendChild(gameResult);
-        if (result.equals(pl1Name)) {
-            Element player1 = createElementPlayer("1", pl1Name, "X");
-            gameResult.appendChild(player1);
-        } else if (result.equals(pl2Name)) {
-            Element player2 = createElementPlayer("2", pl2Name, "O");
-            gameResult.appendChild(player2);
-        } else {
-            gameResult.setTextContent(result);
+
+        for (int i = 2; i < allData.size(); i++) {
+            String[] data = allData.get(i).split(" ");
+            if (data[0].matches("\\d+")) {
+                Element step = doc.createElement("Step");
+                step.setAttribute("num", String.valueOf(data[0]));
+                step.setAttribute("playerId", data[1]);
+                step.setTextContent(data[2]);
+                game.appendChild(step);
+            } else if (data[0].equals("Draw!")) {
+                gameResult.setTextContent(data[0]);
+            } else {
+                Element winnerPlayer = createElementPlayer(data[1], data[0], data[2]);
+                gameResult.appendChild(winnerPlayer);
+            }
+            root_el.appendChild(game);
+            root_el.appendChild(gameResult);
         }
-        saveDataInFile();
+
+        try {
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer = transformerFactory.newTransformer();
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+            DOMSource source = new DOMSource(doc);
+            StreamResult streamResult = new StreamResult(new File(file));
+            transformer.transform(source, streamResult);
+        } catch (TransformerException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    // Служебный метод, создает дом-элементы игроков
+    private Element createElementPlayer(String id, String name, String symbol) {
+        Element player = doc.createElement("Player");
+        player.setAttribute("id", id);
+        player.setAttribute("name", name);
+        player.setAttribute("symbol", symbol);
+        return player;
     }
 
     // Метод для чтения xml файла
     @Override
-    public void readXMLFile() {
+    public void readXMLFile(String fileName) {
+
+        //Вспомогательный набор, хранит распарсенную информацию
+        helpField = new int[3][3];
+        playerList = new ArrayList<>(2);
+        playerStepArray = new ArrayList<>(9);
+        winnerOrDraw = new StringBuilder();
+
         try {
-            File xmlFile = new File(fileName + count + ".xml");
+            File xmlFile = new File(fileName);
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
             Document doc = dBuilder.parse(xmlFile);
@@ -147,29 +167,5 @@ public class DOMGameLogger extends GameLogger {
         } catch (ParserConfigurationException | SAXException | IOException ex) {
             ex.printStackTrace();
         }
-    }
-
-    // Служебный метод, записывает в файл
-    private void saveDataInFile() {
-        try {
-            TransformerFactory transformerFactory = TransformerFactory.newInstance();
-            Transformer transformer = transformerFactory.newTransformer();
-            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-            DOMSource source = new DOMSource(doc);
-            StreamResult streamResult = new StreamResult(new File(fileName + count + ".xml"));
-            transformer.transform(source, streamResult);
-        } catch (TransformerException ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    // Служебный метод, создает дом-элементы игроков
-    private Element createElementPlayer(String id, String name, String symbol) {
-        Element player = doc.createElement("Player");
-        player.setAttribute("id", id);
-        player.setAttribute("name", name);
-        player.setAttribute("symbol", symbol);
-        return player;
     }
 }

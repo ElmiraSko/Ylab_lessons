@@ -1,25 +1,37 @@
 package com.erasko.lns2.loggers;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public abstract class GameLogger {
 
-    // вспомогательный массив для хранения ходов
+    // Вспомогательный массив для хранения ходов
     protected int[][] helpField;
-    // Список игроков
+    // Вспомогательный список игроков
     protected ArrayList<String> playerList;
     // Список снимков игрового поля по ходам
     protected ArrayList<int[][]> playerStepArray;
     // Храним результат
     protected StringBuilder winnerOrDraw;
 
-    // Счетчик игр, соответсвует счетчику класса GameService
-    // учавствует в формировании имени xml-файла
-    protected int count;
+    // Для временного хранения основных данных
+    // получаемых по ходу игры, для дальнейшей извлечения и записи в xml-файл
+    ArrayList<String> allData;
 
-    protected String fileName = "play";
+    // Используем в формировании имени файла
+    Date date;
+    DateFormat dateFormat = new SimpleDateFormat("_dd_MM_yyyy(HHmmss)");
+
+    protected String firstPartOfFile = "play";
     protected String pl1Name;
     protected String pl2Name;
+    protected String currentNewRecordedFile;
+
+    public abstract void writeWinnerOrDraw(String winner);
+
+    public abstract void readXMLFile(String fileName);
 
     public ArrayList<String> getPlayerList() {
         return playerList;
@@ -33,13 +45,31 @@ public abstract class GameLogger {
         return winnerOrDraw.toString();
     }
 
-    public abstract void writePlayers(String name1, String name2);
+    public String getCurrentNewRecordedFile() {
+        return currentNewRecordedFile;
+    }
 
-    public abstract void writeStep(int num, String coords);
+    // В allData сохраняем имена играков
+    public void writePlayers(String name1, String name2) {
+        allData = new ArrayList<>();
+        pl1Name = name1;
+        pl2Name = name2;
+        allData.add(name1);
+        allData.add(name2);
+    }
 
-    public abstract void writeWinnerOrDraw(String winner);
-
-    public abstract void readXMLFile();
+    // В allData сохранили ходы играков
+    public void writeStep(int num, String coords) {
+        // определяем playerId
+        String playerId = num % 2 == 1 ? "1" : "2";
+        StringBuilder step = new StringBuilder()
+                .append(num)
+                .append(" ")
+                .append(playerId)
+                .append(" ")
+                .append(coords);
+        allData.add(step.toString());
+    }
 
     // Служебный метод, создает кадры состояния игрового поля
     protected void writeCoordsInHelpField(String coords, int playerId) {

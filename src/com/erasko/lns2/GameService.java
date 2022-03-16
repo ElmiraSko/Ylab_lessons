@@ -1,15 +1,22 @@
 package com.erasko.lns2;
 
+import com.erasko.lns2.loggers.DOMGameLogger;
 import com.erasko.lns2.loggers.GameLogger;
 import com.erasko.lns2.loggers.StaxStreamLogger;
 
+import java.io.File;
 import java.util.*;
 
 public class GameService {
 
     // Можно воспользоватья одним из логеров: DOMGameLogger() или StaxStreamLogger()
-//    static GameLogger logger = new DOMGameLogger();
-    static GameLogger logger = new StaxStreamLogger();
+    static GameLogger logger = new DOMGameLogger();
+//    static GameLogger logger = new StaxStreamLogger();
+
+    static Scanner sc = new Scanner(System.in);
+    static GameView view = new GameView();
+    static GameField field = new GameField();
+    static GameController controller = new GameController(field, view);
 
     // Список игроков
     static ArrayList<Player> players = new ArrayList<>();
@@ -48,16 +55,78 @@ public class GameService {
         return player;
     }
 
+    // Проигрование указанной игры
+    public static void playRecordedGame(String filePath) {
+        logger.readXMLFile(filePath); // читаем xml-файл и отображаем на консоль
+        ArrayList<String> playerList = logger.getPlayerList();
+        for (String player : playerList) {
+            System.out.println(player);
+        }
+        ArrayList<int[][]> fieldArr = logger.getPlayerStepArray();
+        for (int[][] stepField: fieldArr) {
+            controller.printField(stepField);
+        }
+        System.out.println(logger.getWinnerOrDraw());
+    }
+
+    // Цикл получения положительного или отрицательного ответа
+    public static boolean getPositiveAnswer() {
+        boolean isPositive = false;
+        while (true) {
+            String answer = sc.nextLine();
+            if(answer.toLowerCase().equals("да")) {
+                isPositive = true;
+                break;
+            } else if(answer.toLowerCase().equals("нет")){
+                break;
+            } else {
+                System.out.println("Пожалуйста, ответьте точнее.");
+            }
+        }
+        return isPositive;
+    }
+
+    // Получение xml файлов из корневого каталога
+    public static ArrayList<String> getXMLFile() {
+        ArrayList<String> filesList = new ArrayList<>();
+        String userDirectory = new File("").getAbsolutePath();
+        File dir = new File(userDirectory);
+        File[] files = dir.listFiles();
+        if (files != null) {
+            for (File f : files) {
+                if (f.getName().matches(".+.xml"))
+                    filesList.add(f.getName());
+            }
+        }
+        return filesList;
+    }
+
     public static void main(String[] args) {
-
-        Scanner sc = new Scanner(System.in);
-
-        GameView view = new GameView();
-        GameField field = new GameField();
-        GameController controller = new GameController(field, view);
 
         // цикл игры
         while (wantToPlayMore) {
+
+            // Предлагаем проиграть игру
+            System.out.println("Перед началом игры хотите проиграть какую-нибудь игру, да или нет?");
+            if(getPositiveAnswer()) {
+                System.out.println("Укажите путь к файлу (имя файла)");
+                if(getXMLFile().size() > 0) {
+                    System.out.println("Можно выбрать из представленных ниже:\n");
+                    for (String existingFile : getXMLFile()) {
+                        System.out.println(existingFile);
+                    }
+                    System.out.println("--------------------------------");
+                }
+                String recordedFileName = sc.nextLine();
+                if (new File(recordedFileName).exists()) {
+                    playRecordedGame(recordedFileName);
+                } else {
+                    System.out.println("К сожалению, указанный файл не найден. Пожалуйста, уточните имя файла.");
+                }
+            } else {
+                System.out.println("Хорошо. Тогда перейдем к игре.");
+            }
+
             ++gameCount;
             int count = 1; // счетчик ходов, начинаем с хода номер 1
             controller.write("Начало игры " + gameCount);
@@ -137,48 +206,27 @@ public class GameService {
             controller.write(players);  // записали рейтинг в файл
             System.out.println(players); // вывели на консоль
 
-            // Пока реализована возможность прочитать
-            // последнюю сыгранную игру, Возможность выбрать предыдущий записанный файл еще не реализована
             System.out.println("Игра была записана в файл, хотите проиграть эту игру?");
-            // цикл получения ответа на вопрос
-            while (true) {
-                String answer = sc.nextLine();
-                if(answer.toLowerCase().equals("да")) {
-                   logger.readXMLFile(); // читаем xml-файл и отображаем на консоль
-                   ArrayList<String> playerList = logger.getPlayerList();
-                    for (String player : playerList) {
-                        System.out.println(player);
-                    }
-                   ArrayList<int[][]> fieldArr = logger.getPlayerStepArray();
-                    for (int[][] stepField: fieldArr) {
-                        controller.printField(stepField);
-                    }
-                    System.out.println( logger.getWinnerOrDraw());
-                    break; // выходим из цикла опроса
-                } else if(answer.toLowerCase().equals("нет")){
-                    System.out.println("Хорошо.");
-                    break;
+            if (getPositiveAnswer()) {
+                String recordedFileName = logger.getCurrentNewRecordedFile();
+                if (new File(recordedFileName).exists()) {
+                    playRecordedGame(recordedFileName);
                 } else {
-                    System.out.println("Пожалуйста, ответьте точнее.");
+                    System.out.println("К сожалению, указанный файл не найден. Пожалуйста, уточните имя файла.");
                 }
+            } else {
+                System.out.println("Хорошо, тогда следующий вопрос.");
             }
+
             System.out.println("Хотите сыграть еще раз? Введите ответ да или нет");
-            // цикл получения ответа на вопрос
-            while (true) {
-                String answer = sc.nextLine();
-                if(answer.toLowerCase().equals("да")) {
-                    GameField.gameOver = false;
-                    controller.clear(); // очищаем игровое поле
-                    System.out.println("Отлично!");
-                    break; // выходим из цикла опроса
-                } else if(answer.toLowerCase().equals("нет")){
-                    System.out.println("Спасибо, что были с нами. До встречи!");
-                    wantToPlayMore = false;
-                    controller.close(); // закрыли поток для записи в файл
-                    break;
-                } else {
-                    System.out.println("Пожалуйста, ответьте точнее.");
-                }
+            if (getPositiveAnswer()) {
+                GameField.gameOver = false;
+                controller.clear(); // очищаем игровое поле
+                System.out.println("Отлично!");
+            } else {
+                System.out.println("Спасибо, что были с нами. До встречи!");
+                wantToPlayMore = false;
+                controller.close(); // закрыли поток для записи в файл
             }
         }
     }

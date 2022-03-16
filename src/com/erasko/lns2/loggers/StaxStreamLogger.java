@@ -9,50 +9,16 @@ import javax.xml.transform.stream.StreamSource;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class StaxStreamLogger extends GameLogger {
 
-    FileWriter fileWriter;
     XMLOutputFactory factory;
     XMLStreamWriter writer;
 
     XMLStreamReader reader;
     XMLInputFactory inputFactory;
     FileReader fileReader;
-
-    // Для временного хранения основных данных
-    // получаемых по ходу игры, для дальнейшей обработки и записи в xml-файл
-    ArrayList<String> allData;
-
-    // В allData сохраняем имена играков
-    @Override
-    public void writePlayers(String name1, String name2) {
-        count++;
-        allData = new ArrayList<>();
-        pl1Name = name1;
-        pl2Name = name2;
-        allData.add(name1);
-        allData.add(name2);
-
-        helpField = new int[3][3];
-        playerList = new ArrayList<>(2);
-        playerStepArray = new ArrayList<>(9);
-        winnerOrDraw = new StringBuilder();
-    }
-
-    // В allData сохранили ходы играков
-    @Override
-    public void writeStep(int num, String coords) {
-        // определяем playerId
-        String playerId = num % 2 == 1 ? "1" : "2";
-        StringBuilder step = new StringBuilder()
-                .append(num)
-                .append(" ")
-                .append(playerId)
-                .append(" ")
-                .append(coords);
-        allData.add(step.toString());
-    }
 
     // В allData сохранили результат игры
     @Override
@@ -71,11 +37,13 @@ public class StaxStreamLogger extends GameLogger {
     private void saveDataInFile() {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-        // Собираем имя файла
-        String file = fileName + count + ".xml";
+        date = new Date();
+        String dateSuffix = dateFormat.format(date);
+        // Собираем имя файла, добавили временное значение
+        String file = firstPartOfFile + dateSuffix + ".xml";
+        currentNewRecordedFile = file;
 
         try {
-            fileWriter = new FileWriter(file);
             factory = XMLOutputFactory.newInstance();
 
             writer = factory.createXMLStreamWriter(out);
@@ -120,7 +88,7 @@ public class StaxStreamLogger extends GameLogger {
             writer.writeEndDocument();
             writer.flush();
             writer.close();
-        } catch (FactoryConfigurationError | XMLStreamException | IOException e) {
+        } catch (FactoryConfigurationError | XMLStreamException e) {
             e.printStackTrace();
         }
 
@@ -153,9 +121,16 @@ public class StaxStreamLogger extends GameLogger {
     }
 
     // Метод для чтения xml файла
-    public void readXMLFile() {
+    public void readXMLFile(String fileName) {
+
+        //Вспомогательный набор, хранит распарсенную информацию
+        helpField = new int[3][3];
+        playerList = new ArrayList<>(2);
+        playerStepArray = new ArrayList<>(9);
+        winnerOrDraw = new StringBuilder();
+
         try {
-            fileReader = new FileReader(fileName + count + ".xml");
+            fileReader = new FileReader(fileName);
             inputFactory = XMLInputFactory.newInstance();
             reader = inputFactory.createXMLStreamReader(fileReader);
             int eventType ;
