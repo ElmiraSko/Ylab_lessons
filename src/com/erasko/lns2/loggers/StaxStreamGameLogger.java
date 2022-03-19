@@ -11,30 +11,18 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class StaxStreamLogger extends GameLogger {
+public class StaxStreamGameLogger extends GameLogger {
 
-    XMLOutputFactory factory;
-    XMLStreamWriter writer;
+    private XMLOutputFactory factory;
+    private XMLStreamWriter writer;
 
-    XMLStreamReader reader;
-    XMLInputFactory inputFactory;
-    FileReader fileReader;
-
-    // В allData сохранили результат игры
-    @Override
-    public void writeWinnerOrDraw(String result) {
-        if (result.equals(pl1Name)) {
-            allData.add(result + " 1 X");
-        } else if (result.equals(pl2Name)) {
-            allData.add(result + " 2 O");
-        } else {
-            allData.add(result);
-        }
-        saveDataInFile();
-    }
+    private XMLStreamReader reader;
+    private XMLInputFactory inputFactory;
+    private FileReader fileReader;
 
     // Метод достает из allData данные и обработав записывает их в xml-файл
-    private void saveDataInFile() {
+    @Override
+    protected void saveDataInFile() {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
         date = new Date();
@@ -125,7 +113,7 @@ public class StaxStreamLogger extends GameLogger {
 
         //Вспомогательный набор, хранит распарсенную информацию
         helpField = new int[3][3];
-        playerList = new ArrayList<>(2);
+        helpPayerList = new ArrayList<>(2);
         playerStepArray = new ArrayList<>(9);
         winnerOrDraw = new StringBuilder();
 
@@ -145,7 +133,7 @@ public class StaxStreamLogger extends GameLogger {
                             String plNumber = reader.getAttributeValue(null, "id");
                             String plName = reader.getAttributeValue(null, "name");
                             String symbol = reader.getAttributeValue(null, "symbol");
-                            playerList.add(plNumber + " игрок: " + plName + ", ходит " + symbol);
+                            helpPayerList.add(plNumber + " игрок: " + plName + ", ходит " + symbol);
                             break;
 
                         case "Step":

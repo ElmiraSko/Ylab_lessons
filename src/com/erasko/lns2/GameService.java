@@ -2,23 +2,27 @@ package com.erasko.lns2;
 
 import com.erasko.lns2.loggers.DOMGameLogger;
 import com.erasko.lns2.loggers.GameLogger;
-import com.erasko.lns2.loggers.StaxStreamLogger;
+import com.erasko.lns2.loggers.JSONGameLogger;
+import com.erasko.lns2.loggers.StaxStreamGameLogger;
 
 import java.io.File;
 import java.util.*;
 
 public class GameService {
 
-    // Можно воспользоватья одним из логеров: DOMGameLogger() или StaxStreamLogger()
-    static GameLogger logger = new DOMGameLogger();
-//    static GameLogger logger = new StaxStreamLogger();
+    /** Можно воспользоватья одним из логеров:
+     *  DOMGameLogger(), StaxStreamLogger() или JSONGameLogger()
+     */
+//    static GameLogger logger = new DOMGameLogger();
+//    static GameLogger logger = new StaxStreamGameLogger();
+    static JSONGameLogger logger = new JSONGameLogger();
 
     static Scanner sc = new Scanner(System.in);
     static GameView view = new GameView();
     static GameField field = new GameField();
     static GameController controller = new GameController(field, view);
 
-    // Список игроков
+    // Список игроков, которые учавствуют в игре
     static ArrayList<Player> players = new ArrayList<>();
 
     // Компаратор для сортировки списка игроков
@@ -86,19 +90,25 @@ public class GameService {
         return isPositive;
     }
 
-    // Получение xml файлов из корневого каталога
-    public static ArrayList<String> getXMLFile() {
+    // Получение xml (json) файлов из корневого каталога
+    public static ArrayList<String> getFiles(String regex) {
         ArrayList<String> filesList = new ArrayList<>();
         String userDirectory = new File("").getAbsolutePath();
         File dir = new File(userDirectory);
         File[] files = dir.listFiles();
         if (files != null) {
             for (File f : files) {
-                if (f.getName().matches(".+.xml"))
+                if (f.getName().matches(regex))
                     filesList.add(f.getName());
             }
         }
         return filesList;
+    }
+    private static String getRegEx(GameLogger logger) {
+        if (logger instanceof JSONGameLogger) {
+            return ".+.json";
+        }
+        return ".+.xml";
     }
 
     public static void main(String[] args) {
@@ -110,9 +120,9 @@ public class GameService {
             System.out.println("Перед началом игры хотите проиграть какую-нибудь игру, да или нет?");
             if(getPositiveAnswer()) {
                 System.out.println("Укажите путь к файлу (имя файла)");
-                if(getXMLFile().size() > 0) {
+                if(getFiles(getRegEx(logger)).size() > 0) {
                     System.out.println("Можно выбрать из представленных ниже:\n");
-                    for (String existingFile : getXMLFile()) {
+                    for (String existingFile : getFiles(getRegEx(logger))) {
                         System.out.println(existingFile);
                     }
                     System.out.println("--------------------------------");

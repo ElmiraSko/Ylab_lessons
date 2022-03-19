@@ -3,8 +3,10 @@ package com.erasko.lns2;
 import java.util.Objects;
 
 public class Player {
-    String name;
-    int winsCount;
+
+    private String name;
+
+    private int winsCount;
 
     public Player(String name) {
         this.name = name;

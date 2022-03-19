@@ -26,21 +26,8 @@ public class DOMGameLogger extends GameLogger {
     DocumentBuilder db  = null;
     Document doc = null;
 
-    // Метод записывает выигрышный результат или ничью
-    @Override
-    public void writeWinnerOrDraw(String result) {
-        if (result.equals(pl1Name)) {
-            allData.add(result + " 1 X");
-        } else if (result.equals(pl2Name)) {
-            allData.add(result + " 2 O");
-        } else {
-            allData.add(result);
-        }
-        saveDataInFile();
-    }
-
-    // Служебный метод, записывает в файл
-    private void saveDataInFile() {
+    // Метод записывает в xml-файл
+    protected void saveDataInFile() {
         date = new Date();
         String dateSuffix = dateFormat.format(date);
         // Собираем имя файла, добавили временное значение
@@ -111,7 +98,7 @@ public class DOMGameLogger extends GameLogger {
 
         //Вспомогательный набор, хранит распарсенную информацию
         helpField = new int[3][3];
-        playerList = new ArrayList<>(2);
+        helpPayerList = new ArrayList<>(2);
         playerStepArray = new ArrayList<>(9);
         winnerOrDraw = new StringBuilder();
 
@@ -130,7 +117,7 @@ public class DOMGameLogger extends GameLogger {
                     String plName = playerEl.getAttribute("name");
                     String plNumber = playerEl.getAttribute("id");
                     String plSymbol = playerEl.getAttribute("symbol");
-                    playerList.add(plNumber + " игрок: " + plName + ", ходит " + plSymbol);
+                    helpPayerList.add(plNumber + " игрок: " + plName + ", ходит " + plSymbol);
                 }
             }
             // Прочитали ходы
