@@ -31,7 +31,7 @@ public abstract class GameLogger {
 
     protected abstract void saveDataInFile();
 
-    public abstract void readXMLFile(String fileName);
+    public abstract void readFile(String fileName);
 
     public ArrayList<String> getPlayerList() {
         return helpPayerList;
@@ -82,7 +82,8 @@ public abstract class GameLogger {
     }
 
     // Служебный метод, создает кадры состояния игрового поля (при чтении из файла)
-    protected void writeCoordsInHelpField(String coords, int playerId) {
+    protected void writeCoordsInHelpField(String coordinates, int playerId) {
+        String coords = convertCoords(coordinates);
         int x = Integer.parseInt(coords.substring(0,1)) - 1;
         int y = Integer.parseInt(coords.substring(1)) - 1;
         if (playerId == 1) {
@@ -96,5 +97,24 @@ public abstract class GameLogger {
             System.arraycopy(helpField[i], 0, currentField[i], 0, currentField[i].length);
         // Сохранили в список очередное состояние поля
         playerStepArray.add(currentField);
+    }
+
+    private String convertCoords(String coords) {
+        switch (coords.trim().length()){
+            case 1: { return convertSingle(coords); }
+            case 2: {}
+            case 3: { return convertTriple(coords); }
+            default: return coords;
+        }
+    }
+
+    private String convertSingle(String coords) {
+        String[] myCoords = {"11", "12", "13", "21", "22", "23", "31", "32", "33"};
+        return myCoords[Integer.parseInt(coords)-1];
+    }
+
+    private String convertTriple(String coords) {
+        String getCoords = coords.trim();
+        return coords.charAt(0) + coords.substring(getCoords.length()-1);
     }
 }

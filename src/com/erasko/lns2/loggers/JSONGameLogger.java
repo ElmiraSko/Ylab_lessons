@@ -13,6 +13,7 @@ public class JSONGameLogger extends GameLogger {
 
     ObjectMapper objectMapper = new ObjectMapper();
 
+    // Метод записывает в json-файл
     @Override
     protected void saveDataInFile() {
         date = new Date();
@@ -50,8 +51,9 @@ public class JSONGameLogger extends GameLogger {
 
     }
 
+    // Метод для чтения json-файла
     @Override
-    public void readXMLFile(String fileName) {
+    public void readFile(String fileName) {
         //Вспомогательный набор, хранит распарсенную информацию
         helpField = new int[3][3];
         helpPayerList = new ArrayList<>(2);

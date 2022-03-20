@@ -27,6 +27,7 @@ public class DOMGameLogger extends GameLogger {
     Document doc = null;
 
     // Метод записывает в xml-файл
+    @Override
     protected void saveDataInFile() {
         date = new Date();
         String dateSuffix = dateFormat.format(date);
@@ -94,7 +95,7 @@ public class DOMGameLogger extends GameLogger {
 
     // Метод для чтения xml файла
     @Override
-    public void readXMLFile(String fileName) {
+    public void readFile(String fileName) {
 
         //Вспомогательный набор, хранит распарсенную информацию
         helpField = new int[3][3];

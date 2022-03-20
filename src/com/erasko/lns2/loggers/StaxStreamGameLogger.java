@@ -109,7 +109,8 @@ public class StaxStreamGameLogger extends GameLogger {
     }
 
     // Метод для чтения xml файла
-    public void readXMLFile(String fileName) {
+    @Override
+    public void readFile(String fileName) {
 
         //Вспомогательный набор, хранит распарсенную информацию
         helpField = new int[3][3];

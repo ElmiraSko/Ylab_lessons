@@ -61,7 +61,7 @@ public class GameService {
 
     // Проигрование указанной игры
     public static void playRecordedGame(String filePath) {
-        logger.readXMLFile(filePath); // читаем xml-файл и отображаем на консоль
+        logger.readFile(filePath); // читаем xml-файл и отображаем на консоль
         ArrayList<String> playerList = logger.getPlayerList();
         for (String player : playerList) {
             System.out.println(player);
