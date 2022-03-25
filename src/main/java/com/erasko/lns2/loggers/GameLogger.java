@@ -25,7 +25,8 @@ public abstract class GameLogger {
     Date date;
     DateFormat dateFormat = new SimpleDateFormat("_dd_MM_yyyy(HHmmss)");
 
-    protected String firstPartOfFile = "play";
+    // game_files - папка в корне проекта, для хранения файлов
+    protected String firstPartOfFile = "game_files\\play";
 
     protected String currentNewRecordedFile;
 

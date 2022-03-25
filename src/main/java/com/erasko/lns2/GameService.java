@@ -1,8 +1,8 @@
 package com.erasko.lns2;
 
-import com.erasko.lns2.loggers.DOMGameLogger;
 import com.erasko.lns2.loggers.GameLogger;
-import com.erasko.lns2.loggers.JSONGameLogger;
+import com.erasko.lns2.loggers.JSONDataBindGameLogger;
+import com.erasko.lns2.loggers.JSONStreamingAPIGameLogger;
 import com.erasko.lns2.loggers.StaxStreamGameLogger;
 
 import java.io.File;
@@ -10,12 +10,15 @@ import java.util.*;
 
 public class GameService {
 
-    /** Можно воспользоватья одним из логеров:
-     *  DOMGameLogger(), StaxStreamLogger() или JSONGameLogger()
+    /**
+     * Можно воспользоватья одним из логеров:
+     *  DOMGameLogger(), StaxStreamLogger() или JSONDataBindGameLogger()
      */
 //    static GameLogger logger = new DOMGameLogger();
 //    static GameLogger logger = new StaxStreamGameLogger();
-    static JSONGameLogger logger = new JSONGameLogger();
+//    static JSONDataBindGameLogger logger = new JSONDataBindGameLogger();
+    static JSONStreamingAPIGameLogger logger = new JSONStreamingAPIGameLogger();
+
 
     static Scanner sc = new Scanner(System.in);
     static GameView view = new GameView();
@@ -93,19 +96,22 @@ public class GameService {
     // Получение xml (json) файлов из корневого каталога
     public static ArrayList<String> getFiles(String regex) {
         ArrayList<String> filesList = new ArrayList<>();
-        String userDirectory = new File("").getAbsolutePath();
+        String userDirectory = new File("game_files").getAbsolutePath();
         File dir = new File(userDirectory);
         File[] files = dir.listFiles();
         if (files != null) {
             for (File f : files) {
                 if (f.getName().matches(regex))
-                    filesList.add(f.getName());
+                    filesList.add("game_files\\" + f.getName());
             }
         }
         return filesList;
     }
     private static String getRegEx(GameLogger logger) {
-        if (logger instanceof JSONGameLogger) {
+        if (logger instanceof JSONDataBindGameLogger) {
+            return ".+.json";
+        }
+        if (logger instanceof JSONStreamingAPIGameLogger) {
             return ".+.json";
         }
         return ".+.xml";

@@ -4,20 +4,20 @@ import java.util.ArrayList;
 
 public class GameDTO {
 
-    private ArrayList<StepDTO> steps;
+    private ArrayList<StepDTO> step;
 
     public GameDTO() {
     }
 
-    public GameDTO(ArrayList<StepDTO> steps) {
-        this.steps = steps;
+    public GameDTO(ArrayList<StepDTO> step) {
+        this.step = step;
     }
 
-    public ArrayList<StepDTO> getSteps() {
-        return steps;
+    public ArrayList<StepDTO> getStep() {
+        return step;
     }
 
-    public void setSteps(ArrayList<StepDTO> steps) {
-        this.steps = steps;
+    public void setStep(ArrayList<StepDTO> step) {
+        this.step = step;
     }
 }

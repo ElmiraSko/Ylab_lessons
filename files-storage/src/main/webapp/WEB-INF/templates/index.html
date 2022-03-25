@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th ="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" type="text/css" th:href="@{../../resources/style.css}">
+    <title>Welcome</title>
+</head>
+<body>
+    <main class="main">
+        <h2>Welcome!</h2>
+        <form method="POST" enctype="multipart/form-data" action="/uploadFile">
+            File to upload:
+            <input type="file" name="file"><br />
+            <br /> <br />
+            <input type="submit" value="Upload">
+            Press here to upload the file!
+        </form>
+
+    </main>
+</body>
+</html>

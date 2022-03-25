@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class JSONGameLogger extends GameLogger {
+public class JSONDataBindGameLogger extends GameLogger {
 
     ObjectMapper objectMapper = new ObjectMapper();
 
@@ -39,7 +39,6 @@ public class JSONGameLogger extends GameLogger {
             PlayerDTO playerDTO = new PlayerDTO(data[1], data[0], data[2]);
             resultDTO.setPlayer(playerDTO);
         }
-
         GamePlayDTO gamePlayDTO = new GamePlayDTO(players, new GameDTO(playerStepDTOS), resultDTO);
         GameProcessDTO processDTO = new GameProcessDTO(gamePlayDTO);
 
@@ -49,7 +48,6 @@ public class JSONGameLogger extends GameLogger {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-
     }
 
     // Метод для чтения json-файла
@@ -74,7 +72,7 @@ public class JSONGameLogger extends GameLogger {
                     playerDTOS.get(1).getName() + ", ходит " + playerDTOS.get(1).getSymbol());
 
             // подготовили последовательность ходов на поле
-            for (StepDTO stp: game.getSteps()) {
+            for (StepDTO stp: game.getStep()) {
                 writeCoordsInHelpField(String.valueOf(stp.getCoors()), Integer.parseInt(stp.getPlayerId()));
             }
             // Прочитали результат

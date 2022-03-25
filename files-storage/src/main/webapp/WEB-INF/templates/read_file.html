@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th ="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" type="text/css" th:href="@{../../resources/style.css}">
+    <title>Read file</title>
+</head>
+<body th:object="${my_message}">
+    <main class="main">
+        <h2>Welcome!</h2>
+        <a class="back" th:href="@{/toWelcome}">To the Welcome page</a>
+        <p>File Contents: </p>
+        <p th:text="${my_message.message}"> </p>
+        <span th:text="${my_message.fileName}"></span>
+    </main>
+</body>
+</html>
