@@ -18,7 +18,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:3000")
+//                .allowedOrigins("http://localhost:3000")
+//                .allowedOrigins("https://tic-tac-front.herokuapp.com/")
+
+                .allowedOrigins("*") // временно, буду разбираться
                 .allowedMethods("*");
     }
 }

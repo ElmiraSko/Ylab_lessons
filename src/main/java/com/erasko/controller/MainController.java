@@ -48,7 +48,7 @@ public class MainController {
             gameDTO.setStepCount(stepService.getLastStep().getNum());
         }
         // если есть победитель
-        if(fieldService.isGameOver()) { // countGame!
+        if(fieldService.isGameOver()) {
             if (!playerService.isIncreasedNumberWins()) {
                 // увеличиваем число побед игрока
                 playerService.setWinsCount(curPlayer);
@@ -98,7 +98,7 @@ public class MainController {
     }
 
     /**
-     * Метод получает играков и записывает их в коллекции
+     * Метод получает игроков и записывает их в коллекции
      * @param players
      * возвращаем статус
      */
@@ -107,12 +107,12 @@ public class MainController {
 
         Player pl1 = players.getPlayer1();
         Player pl2 = players.getPlayer2();
-        // записали имена играков в логер
+        // записали имена игроков в логер
         logger.writePlayers(pl1.getName(), pl2.getName());
-        // внесли играков в "общий список играков"
+        // внесли игроков в "общий список играков"
         playerService.addPlayer(pl1);
         playerService.addPlayer(pl2);
-        // из общего списка достали нужных играков
+        // из общего списка достали нужных игроков
         Player cpl1 = playerService.checkPlayer(pl1);
         Player cpl2 = playerService.checkPlayer(pl2);
         // записали их "список текущих"
@@ -134,10 +134,8 @@ public class MainController {
             logger.writeStep(step.getNum(), step.getCoords());
 
             stepService.addStep(step);
-            // достали из списка играков нужного по его id
+            // достали из "списка игроков" нужного по его id
             Player pl = currentPlayersService.getPlayerById(step.getPlayerId());
-            System.out.println("Из контроллера: степс");
-            System.out.println(pl);
             // в currentPlayers передали игрока ходившего последним
             currentPlayersService.setLastPlayer(pl);
 
