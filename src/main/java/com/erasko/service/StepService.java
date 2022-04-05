@@ -6,28 +6,36 @@ import com.erasko.repository.StepRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 // Предполагается, что будет интерфейс StepService
 @Service
-public class StepServiceImp {
+public class StepService {
 
     StepRepository stepRepository;
 
     @Autowired
-    public StepServiceImp(StepRepository stepRepository) {
+    public StepService(StepRepository stepRepository) {
         this.stepRepository = stepRepository;
     }
 
     public void addStep(Step step) {
-        stepRepository.addStep(step);
+        stepRepository.save(step);
     }
 
     public void clear() {
-        stepRepository.clear();
+        stepRepository.deleteAll();
     }
 
+    public List<Step> findAllStep() {
+        return stepRepository.getSteps();
+    }
+
+    // добавить исключение
     public Step getLastStep() {
         return stepRepository.getLastStep();
     }
+
     public int getStepsSize() {
         return stepRepository.getSize();
     }

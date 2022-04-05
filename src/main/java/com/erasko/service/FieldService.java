@@ -5,12 +5,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class FieldServiceImp {
+public class FieldService {
 
     Field gameField;
 
     @Autowired
-    public FieldServiceImp(Field field) {
+    public FieldService(Field field) {
         this.gameField = field;
     }
 

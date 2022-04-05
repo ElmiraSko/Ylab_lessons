@@ -89,7 +89,6 @@ public class JSONStreamingAPIGameLogger extends GameLogger {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-
     }
 
     @Override

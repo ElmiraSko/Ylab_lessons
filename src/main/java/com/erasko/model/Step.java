@@ -1,14 +1,15 @@
 package com.erasko.model;
 
 import org.springframework.stereotype.Component;
+import java.io.Serializable;
 
 @Component
-public class Step {
+public class Step implements Serializable {
 
-    int num;
-    String playerId;
-    String symbol;
-    String coords;
+    private Integer num;
+    private String playerId;
+    private String symbol;
+    private String coords;
 
     public Step() {
     }
@@ -56,6 +57,6 @@ public class Step {
     public String toString() {
         return "Step{" +
                 "num=" + num +
-                ", coords='" + coords + '}';
+                ", coords= " + coords + '}';
     }
 }

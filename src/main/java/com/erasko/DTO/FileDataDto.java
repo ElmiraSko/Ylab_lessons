@@ -2,16 +2,16 @@ package com.erasko.DTO;
 
 import java.util.ArrayList;
 
-public class FileDataDTO {
+public class FileDataDto {
 
     ArrayList<String> crPayerList;
     ArrayList<int[][]> plSteps;
     String winnerOrDraw;
 
-    public FileDataDTO() {
+    public FileDataDto() {
     }
 
-    public FileDataDTO(ArrayList<String> crPayerList, ArrayList<int[][]> plSteps, String winnerOrDraw) {
+    public FileDataDto(ArrayList<String> crPayerList, ArrayList<int[][]> plSteps, String winnerOrDraw) {
         this.crPayerList = crPayerList;
         this.plSteps = plSteps;
         this.winnerOrDraw = winnerOrDraw;
@@ -41,3 +41,5 @@ public class FileDataDTO {
         this.winnerOrDraw = winnerOrDraw;
     }
 }
+
+

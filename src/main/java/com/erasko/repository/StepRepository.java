@@ -19,12 +19,12 @@ public class StepRepository {
         this.steps = steps;
     }
 
-    public void addStep(Step step) {
+    public void save(Step step) {
         steps.add(step);
         System.out.println(steps);
     }
 
-    public void clear() {
+    public void deleteAll() {
         steps.clear();
     }
 
@@ -36,4 +36,7 @@ public class StepRepository {
         return steps.get(getSize()-1);
     }
 
+    public ArrayList<Step> getSteps() {
+        return steps;
+    }
 }

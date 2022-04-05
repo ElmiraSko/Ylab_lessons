@@ -1,24 +1,31 @@
 package com.erasko.model;
+import javax.persistence.*;
 
-import org.springframework.stereotype.Component;
-
-import java.util.Objects;
-
-@Component
+@Entity
 public class Player {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+    @Column(unique=true)
     private String name;
-    private int id;
-    private String symbol;
     private int winsCount;
 
     public Player() {
     }
 
-    public Player(String name, int id, String symbol) {
-        this.name = name;
+    public Player(Integer id, String name, int winsCount) {
         this.id = id;
-        this.symbol = symbol;
+        this.name = name;
+        this.winsCount = winsCount;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -29,22 +36,6 @@ public class Player {
         this.name = name;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getSymbol() {
-        return symbol;
-    }
-
-    public void setSymbol(String symbol) {
-        this.symbol = symbol;
-    }
-
     public int getWinsCount() {
         return winsCount;
     }
@@ -52,21 +43,13 @@ public class Player {
     public void setWinsCount() {
         winsCount++;
     }
+
     @Override
     public String toString() {
-        return name;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Player player = (Player) o;
-        return name.equals(player.name);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name);
+        return "Player{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", winsCount=" + winsCount +
+                '}';
     }
 }
