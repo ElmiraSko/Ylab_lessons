@@ -3,6 +3,7 @@ package com.erasko.controller;
 import com.erasko.DTO.CurrPlayersDto;
 import com.erasko.DTO.FileDataDto;
 import com.erasko.DTO.GameDto;
+import com.erasko.exceptions.NotFoundException;
 import com.erasko.model.*;
 import com.erasko.service.*;
 import com.erasko.model.Message;
@@ -55,13 +56,19 @@ public class MainController {
         return mainService.findAll();
     }
 
-    // Запрос на получение игры из БД
-    @GetMapping("/get-game/{id}")
-    public Game getGame(@PathVariable(value="id") long id) {
-        return mainService.findGameById(id);
+    // Запрос на получение всех игроков
+    @GetMapping("/current-players")
+    public List<CurrentPlayer> getAllCurrentPlayers() {
+        return mainService.getAllCurrentPlayers();
     }
 
     // Запрос на получение игры из БД
+    @GetMapping("/get-game/{id}")
+    public Game getGame(@PathVariable(value="id") long id) throws NotFoundException {
+        return mainService.findGameById(id);
+    }
+
+    // Запрос на получение всех игр из БД
     @GetMapping("/get-games")
     public List<Game> getAllGames() {
         return mainService.findAllGames();
@@ -80,5 +87,14 @@ public class MainController {
 
     public ResponseEntity<Message> rightStep(Message message, HttpStatus status) {
         return ResponseEntity.status(status).body(message);
+    }
+    public ResponseEntity<Message> notFound(Message message, HttpStatus status) {
+        return ResponseEntity.status(status).body(message);
+    }
+
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<Message> handleException(NotFoundException e) {
+        Message message = new Message(e.getMessage());
+        return notFound(message, HttpStatus.NOT_FOUND);
     }
 }

@@ -4,6 +4,7 @@ import com.erasko.DTO.CurrPlayersDto;
 import com.erasko.DTO.CurrentPlayerDto;
 import com.erasko.DTO.FileDataDto;
 import com.erasko.DTO.GameDto;
+import com.erasko.exceptions.NotFoundException;
 import com.erasko.model.*;
 import com.erasko.utils.GameLogger;
 import com.erasko.utils.JSONStreamingAPIGameLogger;
@@ -148,13 +149,18 @@ public class MainService {
     }
 
     // Получить игру из БД по id
-    public Game findGameById(long id) {
+    public Game findGameById(long id) throws NotFoundException {
         return gameService.findById(id);
     }
 
     // Получить всех игроков
     public List<Player> findAll() {
         return playerService.findAll();
+    }
+
+    // Получить всех текущих игроков
+    public List<CurrentPlayer> getAllCurrentPlayers() {
+        return currentPlayerService.findAll();
     }
 
     // Метод сохраняет данные игры в таблицу БД
