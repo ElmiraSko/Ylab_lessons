@@ -32,6 +32,7 @@ public class MainControllerTest {
         Player expectedPlayer = new Player();
         expectedPlayer.setId(1);
         expectedPlayer.setName("Player1");
+        expectedPlayer.setWinsCount();
 
         when(playerRepository.findById(eq(1)))
                 .thenReturn(Optional.of(expectedPlayer));
@@ -41,5 +42,6 @@ public class MainControllerTest {
         assertTrue(player.isPresent());
         assertEquals(expectedPlayer.getId(), player.get().getId());
         assertEquals(expectedPlayer.getName(), player.get().getName());
+        assertEquals(expectedPlayer.getWinsCount(), player.get().getWinsCount());
     }
 }
