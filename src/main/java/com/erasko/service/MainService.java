@@ -25,6 +25,9 @@ public class MainService {
     Result result;
     GameService gameService;
 
+    public MainService() {
+    }
+
     @Autowired
     public MainService(PlayerService playerService,
                        CurrentPlayerService currentPlayerService,
@@ -38,6 +41,10 @@ public class MainService {
         this.fieldService = fieldService;
         this.result = result;
         this.gameService = gameService;
+    }
+
+    public void setPlayerService(PlayerService playerService) {
+        this.playerService = playerService;
     }
 
     public void savePlayers(CurrPlayersDto players) {
