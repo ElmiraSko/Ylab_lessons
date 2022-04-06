@@ -1,7 +1,10 @@
 package com.erasko.model;
 
+import org.springframework.stereotype.Component;
+
 import java.io.Serializable;
 
+@Component
 public class CurrentPlayer implements Serializable {
 
     private String name;

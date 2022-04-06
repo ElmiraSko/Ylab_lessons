@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/gameplay")
 public class MainController {
@@ -21,7 +23,6 @@ public class MainController {
     public MainController(MainService mainService) {
         this.mainService = mainService;
     }
-
 
     @PostMapping("/addPlayers")
     public ResponseEntity<HttpStatus> setPlayers(@RequestBody CurrPlayersDto playersDto) {
@@ -48,10 +49,22 @@ public class MainController {
         return rightStep(message, HttpStatus.OK);
     }
 
+    // Запрос на получение всех игроков
+    @GetMapping("/players")
+    public List<Player> getAllPlayers() {
+        return mainService.findAll();
+    }
+
     // Запрос на получение игры из БД
-    @GetMapping("/get-game")
-    public Game getGame() {
-        return mainService.findGameById(1);
+    @GetMapping("/get-game/{id}")
+    public Game getGame(@PathVariable(value="id") long id) {
+        return mainService.findGameById(id);
+    }
+
+    // Запрос на получение игры из БД
+    @GetMapping("/get-games")
+    public List<Game> getAllGames() {
+        return mainService.findAllGames();
     }
 
     // Запрос на получение файла игры из файловой системы

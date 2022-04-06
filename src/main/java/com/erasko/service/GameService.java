@@ -5,6 +5,8 @@ import com.erasko.repository.GameRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class GameService {
 
@@ -21,6 +23,10 @@ public class GameService {
 
     public Game findById(long id) {
         return gameRepository.findById(id).get();
+    }
+
+    public List<Game> findAll() {
+        return gameRepository.findAll();
     }
 }
 

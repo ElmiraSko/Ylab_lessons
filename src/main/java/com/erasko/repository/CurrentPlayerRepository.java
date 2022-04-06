@@ -13,12 +13,11 @@ import java.util.List;
 @Repository
 public class CurrentPlayerRepository {
 
-    ArrayList<CurrentPlayer> currentPlayers = new ArrayList<>();
+    ArrayList<CurrentPlayer> currentPlayers;
 
-    @Autowired
     public CurrentPlayerRepository() {
     }
-
+    @Autowired
     public CurrentPlayerRepository(ArrayList<CurrentPlayer> currentPlayers) {
         this.currentPlayers = currentPlayers;
     }

@@ -55,6 +55,11 @@ public class MainService {
         result.setLastWentPlayer(pl1); // тот кто ходит первым
     }
 
+    // Отдаем все игры (надо будет переделать, подумать)
+    public List<Game> findAllGames() {
+        return gameService.findAll();
+    }
+
     // Отдаем текущее состояние игры
     public GameDto getField() {
         // формируем DTO
@@ -142,6 +147,16 @@ public class MainService {
                 logger.getWinnerOrDraw());
     }
 
+    // Получить игру из БД по id
+    public Game findGameById(long id) {
+        return gameService.findById(id);
+    }
+
+    // Получить всех игроков
+    public List<Player> findAll() {
+        return playerService.findAll();
+    }
+
     // Метод сохраняет данные игры в таблицу БД
     private void saveGame() {
         Game game = new Game();
@@ -151,11 +166,6 @@ public class MainService {
         game.setSteps(steps);
         game.setResult(result);
         gameService.saveGame(game);
-    }
-
-    // Получить игру из БД по id
-    public Game findGameById(long id) {
-        return gameService.findById(id);
     }
 
     // Используем в методе, который отдает состояние игры
