@@ -25,17 +25,9 @@ public abstract class GameLogger {
     // Используем в формировании имени файла
     Date date;
     DateFormat dateFormat = new SimpleDateFormat("_dd_MM_yyyy(HHmmss)");
-    protected String firstPartOfFile;
 
-    {
-        String rootPath = "D:/gameFiles";
-        File dir = new File(rootPath);
-        if(!dir.exists())
-        {
-            dir.mkdir();
-        }
-        firstPartOfFile = dir + File.separator + "play";
-    }
+    // game_files - папка в корне проекта, для хранения файлов
+    protected String firstPartOfFile = "game_files\\play";
 
     protected String currentNewRecordedFile;
     /**
