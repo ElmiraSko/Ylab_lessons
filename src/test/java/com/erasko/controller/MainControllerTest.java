@@ -3,7 +3,7 @@ package com.erasko.controller;
 import com.erasko.model.Player;
 import com.erasko.repository.PlayerRepository;
 import com.erasko.service.MainService;
-import com.erasko.service.PlayerService;
+import com.erasko.service.impl.PlayerServiceImp;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -24,7 +24,7 @@ public class MainControllerTest {
     public void init() {
         playerRepository = mock(PlayerRepository.class);
         mainService = new MainService();
-        mainService.setPlayerService(new PlayerService(playerRepository));
+        mainService.setPlayerService(new PlayerServiceImp(playerRepository));
     }
 
     @Test

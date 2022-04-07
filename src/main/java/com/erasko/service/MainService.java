@@ -6,6 +6,7 @@ import com.erasko.DTO.FileDataDto;
 import com.erasko.DTO.GameDto;
 import com.erasko.exceptions.NotFoundException;
 import com.erasko.model.*;
+import com.erasko.service.impl.*;
 import com.erasko.utils.GameLogger;
 import com.erasko.utils.JSONStreamingAPIGameLogger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,33 +19,33 @@ public class MainService {
 
     GameLogger logger = new JSONStreamingAPIGameLogger();
 
-    PlayerService playerService;
-    FieldService fieldService;
-    CurrentPlayerService currentPlayerService;
-    StepService stepService;
+    PlayerServiceImp playerServiceImp;
+    FieldServiceImp fieldServiceImp;
+    CurrentPlayerServiceImp currentPlayerServiceImp;
+    StepServiceImp stepServiceImp;
     Result result;
-    GameService gameService;
+    GameServiceImp gameServiceImp;
 
     public MainService() {
     }
 
     @Autowired
-    public MainService(PlayerService playerService,
-                       CurrentPlayerService currentPlayerService,
-                       StepService stepService,
-                       FieldService fieldService,
+    public MainService(PlayerServiceImp playerServiceImp,
+                       CurrentPlayerServiceImp currentPlayerServiceImp,
+                       StepServiceImp stepServiceImp,
+                       FieldServiceImp fieldServiceImp,
                        Result result,
-                       GameService gameService) {
-        this.playerService = playerService;
-        this.currentPlayerService = currentPlayerService;
-        this.stepService = stepService;
-        this.fieldService = fieldService;
+                       GameServiceImp gameServiceImp) {
+        this.playerServiceImp = playerServiceImp;
+        this.currentPlayerServiceImp = currentPlayerServiceImp;
+        this.stepServiceImp = stepServiceImp;
+        this.fieldServiceImp = fieldServiceImp;
         this.result = result;
-        this.gameService = gameService;
+        this.gameServiceImp = gameServiceImp;
     }
 
-    public void setPlayerService(PlayerService playerService) {
-        this.playerService = playerService;
+    public void setPlayerService(PlayerServiceImp playerServiceImp) {
+        this.playerServiceImp = playerServiceImp;
     }
 
     public void savePlayers(CurrPlayersDto players) {
@@ -53,29 +54,29 @@ public class MainService {
         // записали имена игроков в логер
         logger.writePlayers(pl1.getName(), pl2.getName());
         // внесли игроков в "общую таблицу игроков"
-        playerService.savePlayer(pl1);
-        playerService.savePlayer(pl2);
+        playerServiceImp.savePlayer(pl1);
+        playerServiceImp.savePlayer(pl2);
 
         // записали их в таблицу "текущих игроков"
-        currentPlayerService.saveCurrentPlayer(pl1);
-        currentPlayerService.saveCurrentPlayer(pl2);
+        currentPlayerServiceImp.saveCurrentPlayer(pl1);
+        currentPlayerServiceImp.saveCurrentPlayer(pl2);
         result.setResult("");
         result.setLastWentPlayer(pl1); // тот кто ходит первым
     }
 
     // Отдаем все игры (надо будет переделать, подумать)
     public List<Game> findAllGames() {
-        return gameService.findAll();
+        return gameServiceImp.findAll();
     }
 
     // Отдаем текущее состояние игры
     public GameDto getField() {
         // формируем DTO
         GameDto gameDTO = new GameDto();
-        gameDTO.setField(fieldService.getField());
-        if (stepService.getStepsSize() > 0) {
+        gameDTO.setField(fieldServiceImp.getField());
+        if (stepServiceImp.getStepsSize() > 0) {
             // установили номер хода
-            gameDTO.setStepCount(stepService.getLastStep().getNum());
+            gameDTO.setStepCount(stepServiceImp.getLastStep().getNum());
         }
         gameDTO.setCurrentPlayers(currPlayersFromDB());
         gameDTO.setResult(result);
@@ -86,13 +87,13 @@ public class MainService {
     public void getNewGameField() {
         System.out.println("Запрос на новую игру");
         // все хранилища почистили для новой партии
-        fieldService.clear();
-        stepService.clear();
-        currentPlayerService.clear();
+        fieldServiceImp.clear();
+        stepServiceImp.clear();
+        currentPlayerServiceImp.clear();
         result.setResult("");
         logger.setAllData(null);
         logger.setGameIsRecorded(false);
-        playerService.setIncreasedNumberWins(false);
+        playerServiceImp.setIncreasedNumberWins(false);
     }
 
     // Сохранияем ходы и проверяем на окончание игры
@@ -100,24 +101,24 @@ public class MainService {
         // {"num":1,"playerId":"1","symbol":"X","coords":"22"}
         Message message = new Message("No");
         String playerId = step.getPlayerId();
-        boolean isRightStep = fieldService.setStepOnField(playerId, step.getCoords());
+        boolean isRightStep = fieldServiceImp.setStepOnField(playerId, step.getCoords());
 
         // если ход допустимый
         if (isRightStep) {
             // записали в логер очередной ход
             logger.writeStep(step.getNum(), step.getCoords());
             // сохранили ход в БД
-            stepService.addStep(step);
+            stepServiceImp.addStep(step);
             // достали из "списка игроков" нужного по его id
             CurrentPlayer pl =
-                    currentPlayerService.findByGameId(Integer.parseInt(playerId));
+                    currentPlayerServiceImp.findByGameId(Integer.parseInt(playerId));
             // если есть победитель
-            if(fieldService.isGameOver()) {
-                if (!playerService.isIncreasedNumberWins()) {
+            if(fieldServiceImp.isGameOver()) {
+                if (!playerServiceImp.isIncreasedNumberWins()) {
                     // увеличиваем число побед игрока
-                    int winnerCount = playerService.setWinsCount(pl);
+                    int winnerCount = playerServiceImp.setWinsCount(pl);
                     pl.setWinsCount(winnerCount);
-                    playerService.setIncreasedNumberWins(true);
+                    playerServiceImp.setIncreasedNumberWins(true);
                 }
                 // записываем имя игрока в результат
                 result.setResult(pl.getName());
@@ -126,7 +127,7 @@ public class MainService {
                     logger.writeWinnerOrDraw(pl.getName());
                 }
             } else { // если все клетки проставлены, ничья
-                if(stepService.getStepsSize() == fieldService.getStepsCount()) {
+                if(stepServiceImp.getStepsSize() == fieldServiceImp.getStepsCount()) {
                     result.setResult("Draw!");
                     // если игра еще не была записана logger-ром, то записываем
                     if(!logger.gameIsRecorded()) {
@@ -157,34 +158,34 @@ public class MainService {
 
     // Получить игру из БД по id
     public Game findGameById(long id) throws NotFoundException {
-        return gameService.findById(id);
+        return gameServiceImp.findById(id);
     }
 
     // Получить всех игроков
     public List<Player> findAll() {
-        return playerService.findAll();
+        return playerServiceImp.findAll();
     }
 
     // Получить всех текущих игроков
     public List<CurrentPlayer> getAllCurrentPlayers() {
-        return currentPlayerService.findAll();
+        return currentPlayerServiceImp.findAll();
     }
 
     // Метод сохраняет данные игры в таблицу БД
     private void saveGame() {
         Game game = new Game();
-        List<CurrentPlayer> currentPlayers = currentPlayerService.findAll();
-        List<Step> steps = stepService.findAllStep();
+        List<CurrentPlayer> currentPlayers = currentPlayerServiceImp.findAll();
+        List<Step> steps = stepServiceImp.findAllStep();
         game.setCurrentPlayers(currentPlayers);
         game.setSteps(steps);
         game.setResult(result);
-        gameService.saveGame(game);
+        gameServiceImp.saveGame(game);
     }
 
     // Используем в методе, который отдает состояние игры
     private CurrentPlayerDto[] currPlayersFromDB() {
         // получили список текущих играков из БД
-        List<CurrentPlayer> currentPlayerList = currentPlayerService.findAll();
+        List<CurrentPlayer> currentPlayerList = currentPlayerServiceImp.findAll();
         // создали массив CurrentPlayerDto
         CurrentPlayerDto[] currentPlayerArr = new CurrentPlayerDto[2];
         // сформировали CurrentPlayerDto первого игрока
